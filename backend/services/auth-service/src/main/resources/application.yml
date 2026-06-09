@@ -1,0 +1,11 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/northwind}
+    username: ${DB_USER:northwind}
+    password: ${DB_PASSWORD:northwind}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false

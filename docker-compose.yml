@@ -1,0 +1,126 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: northwind-mysql
+    environment:
+      MYSQL_DATABASE: northwind
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: northwind
+      MYSQL_PASSWORD: northwind
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+
+  auth-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        MODULE: services/auth-service
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/northwind
+      SERVER_PORT: 8080
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
+
+  customer-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        MODULE: services/customer-service
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/northwind
+      SERVER_PORT: 8080
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mysql
+
+  product-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        MODULE: services/product-service
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/northwind
+      SERVER_PORT: 8080
+    ports:
+      - "8083:8080"
+    depends_on:
+      - mysql
+
+  order-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        MODULE: services/order-service
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/northwind
+      SERVER_PORT: 8080
+      INVENTORY_URL: http://inventory-service:8080
+      BILLING_URL: http://billing-service:8080
+      WAREHOUSE_URL: http://warehouse-service:8080
+    ports:
+      - "8084:8080"
+    depends_on:
+      - mysql
+
+  inventory-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        MODULE: services/inventory-service
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/northwind
+      SERVER_PORT: 8080
+    ports:
+      - "8085:8080"
+    depends_on:
+      - mysql
+
+  billing-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        MODULE: services/billing-service
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/northwind
+      SERVER_PORT: 8080
+    ports:
+      - "8086:8080"
+    depends_on:
+      - mysql
+
+  warehouse-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        MODULE: services/warehouse-service
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/northwind
+      SERVER_PORT: 8080
+    ports:
+      - "8087:8080"
+    depends_on:
+      - mysql
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - order-service
+
+volumes:
+  mysql_data:

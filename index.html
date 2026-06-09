@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Northwind SOA | Panel de Operacion</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-2: #0b1b31;
+      --card: rgba(13, 25, 44, 0.78);
+      --card-2: rgba(18, 35, 60, 0.9);
+      --line: rgba(173, 196, 255, 0.16);
+      --text: #eaf1ff;
+      --muted: #9fb2d4;
+      --brand: #6ea8fe;
+      --brand-2: #7cf0c8;
+      --warn: #f8c26a;
+      --danger: #ff7b7b;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(110, 168, 254, 0.22), transparent 30%),
+        radial-gradient(circle at top right, rgba(124, 240, 200, 0.16), transparent 22%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+    }
+
+    .shell {
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 12px 30px rgba(110, 168, 254, 0.35);
+      display: grid;
+      place-items: center;
+      color: #07111f;
+      font-weight: 900;
+    }
+
+    .brand h1 {
+      font-size: 1rem;
+      margin: 0;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand p, .muted { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      backdrop-filter: blur(14px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .panel, .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-main {
+      padding: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -90px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,240,200,0.24), transparent 62%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(110, 168, 254, 0.12);
+      border: 1px solid rgba(110, 168, 254, 0.24);
+      color: #cfe0ff;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      line-height: 1.02;
+      max-width: 12ch;
+    }
+
+    .hero p {
+      max-width: 60ch;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 16px 0 22px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #07111f;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.07);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .hero-side {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.45rem;
+      margin-bottom: 4px;
+    }
+
+    .mini-flow {
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--card-2);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .mini-flow h3, .section h3 { margin: 0 0 6px; }
+
+    .section {
+      padding: 24px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .section-head p { margin: 0; }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      min-height: 132px;
+    }
+
+    .card .tag {
+      display: inline-flex;
+      margin-bottom: 12px;
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #cfe0ff;
+      background: rgba(110, 168, 254, 0.12);
+      border: 1px solid rgba(110, 168, 254, 0.18);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .card p { margin: 8px 0 0; color: var(--muted); line-height: 1.5; }
+
+    .architecture {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+
+    .stack {
+      padding: 20px;
+    }
+
+    .layers {
+      display: grid;
+      gap: 12px;
+    }
+
+    .layer {
+      padding: 15px 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .layer span { color: var(--muted); font-size: 0.92rem; }
+
+    .flow-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, rgba(110,168,254,0.28), rgba(124,240,200,0.18));
+      border-color: rgba(124,240,200,0.32);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #07111f;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+
+    .step h4 { margin: 0 0 4px; }
+    .step p { margin: 0; color: var(--muted); line-height: 1.45; }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero, .architecture, .grid-3, .topbar { grid-template-columns: 1fr; }
+      .topbar, .section-head { align-items: start; flex-direction: column; }
+    }
+
+    @media (max-width: 720px) {
+      .shell { width: min(100% - 20px, 1200px); }
+      .hero-main, .hero-side, .section, .stack { padding: 18px; }
+      .metric-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">NW</div>
+        <div>
+          <h1>Northwind SOA</h1>
+          <p>Panel visual para arquitectura y flujo de pedidos</p>
+        </div>
+      </div>
+      <div class="pill">Basado en arquitectura SOA + ciclo pedido a envio</div>
+    </header>
+
+    <section class="hero">
+      <div class="panel hero-main">
+        <div class="eyebrow">Arquitectura moderna para gestion comercial</div>
+        <h2>Una vista clara del ecosistema de servicios y operaciones</h2>
+        <p>
+          Esta pagina resume la estructura SOA de Northwind y el flujo completo desde que el
+          cliente realiza un pedido hasta que recibe la confirmacion con tracking. La experiencia
+          esta pensada para entender rapido el sistema y navegar sin friccion.
+        </p>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="document.getElementById('flujo').scrollIntoView({behavior:'smooth'})">
+            Ver flujo
+          </button>
+          <button class="btn btn-secondary" onclick="document.getElementById('arquitectura').scrollIntoView({behavior:'smooth'})">
+            Ver arquitectura
+          </button>
+        </div>
+      </div>
+
+      <aside class="panel hero-side">
+        <div class="metric-grid">
+          <div class="metric">
+            <strong>4</strong>
+            <span class="muted">Servicios principales</span>
+          </div>
+          <div class="metric">
+            <strong>3</strong>
+            <span class="muted">Capas core</span>
+          </div>
+          <div class="metric">
+            <strong>10</strong>
+            <span class="muted">Pasos del flujo normal</span>
+          </div>
+          <div class="metric">
+            <strong>1</strong>
+            <span class="muted">Vista simple y responsiva</span>
+          </div>
+        </div>
+
+        <div class="mini-flow">
+          <h3>Resumen rapido</h3>
+          <p class="muted">Cliente -> Servicios -> Negocio -> Datos</p>
+          <p class="muted">Pedido -> Stock -> Factura -> Almacen -> Tracking</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel section">
+      <div class="section-head">
+        <div>
+          <h3>Mapa funcional</h3>
+          <p class="muted">Las piezas clave del sistema resumidas en tarjetas.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="tag">Frontend</div>
+          <strong>Portales de acceso</strong>
+          <p>Sistema comercial web, desktop y portal del cliente como puntos de entrada.</p>
+        </article>
+        <article class="card">
+          <div class="tag">SOA</div>
+          <strong>Servicios reutilizables</strong>
+          <p>Autenticacion, clientes, pedidos y empleados consumidos por la capa de aplicacion.</p>
+        </article>
+        <article class="card">
+          <div class="tag">Datos</div>
+          <strong>Northwind como backend</strong>
+          <p>Gestion de clientes, productos, pedidos y proveedores conectada a las tablas base.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="arquitectura" class="architecture">
+      <div class="panel stack">
+        <div class="section-head">
+          <div>
+            <h3>Arquitectura SOA</h3>
+            <p class="muted">Estructura en capas inspirada en la primera imagen.</p>
+          </div>
+        </div>
+        <div class="layers">
+          <div class="layer"><strong>Capa de aplicacion</strong><span>Frontends y consumo de servicios</span></div>
+          <div class="layer"><strong>Capa de servicios</strong><span>Autenticacion, clientes, pedidos y empleados</span></div>
+          <div class="layer"><strong>Capa de negocio</strong><span>Gestion de clientes, productos, pedidos y proveedores</span></div>
+          <div class="layer"><strong>Capa de datos</strong><span>Base Northwind y tablas Customers, Orders, Products, Employees</span></div>
+        </div>
+      </div>
+
+      <div class="panel stack">
+        <div class="section-head">
+          <div>
+            <h3>Diagrama rapido</h3>
+            <p class="muted">Lectura vertical para entender dependencias.</p>
+          </div>
+        </div>
+        <div class="layers">
+          <div class="layer"><strong>Cliente / Web / Desktop</strong><span>Consume</span></div>
+          <div class="layer"><strong>Servicios SOA</strong><span>Procesan y exponen operaciones</span></div>
+          <div class="layer"><strong>Negocio</strong><span>Reglas y validaciones</span></div>
+          <div class="layer"><strong>Datos Northwind</strong><span>Persistencia de informacion</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="flujo" class="panel section" style="margin-top:18px;">
+      <div class="section-head">
+        <div>
+          <h3>Ciclo pedido a envio</h3>
+          <p class="muted">Dos escenarios para reflejar la segunda imagen.</p>
+        </div>
+        <div class="flow-tabs" role="tablist" aria-label="Escenarios de flujo">
+          <button class="tab active" data-flow="normal">Flujo normal</button>
+          <button class="tab" data-flow="stockout">Sin stock</button>
+        </div>
+      </div>
+
+      <div class="timeline" id="timeline"></div>
+      <div class="footer-note" id="flowNote"></div>
+    </section>
+  </main>
+
+  <script>
+    const flows = {
+      normal: {
+        note: 'Cuando hay stock disponible, el sistema avanza desde la reserva hasta el tracking y la notificacion final.',
+        steps: [
+          ['1', 'El cliente realiza un pedido en el sitio web.'],
+          ['2', 'El sistema registra la solicitud y consulta disponibilidad.'],
+          ['3', 'Se confirma y reserva el articulo.'],
+          ['4', 'Los detalles se envian a facturacion.'],
+          ['5', 'Se confirma la factura generada.'],
+          ['6', 'Se notifica al almacen para preparar el pedido.'],
+          ['7', 'Se confirma el despacho y se obtiene numero de tracking.'],
+          ['8', 'Se actualiza el estado del pedido.'],
+          ['9', 'El cliente recibe correo de confirmacion y seguimiento.']
+        ]
+      },
+      stockout: {
+        note: 'Si no hay stock suficiente, el flujo cambia a un proceso de reabastecimiento y aviso de retraso.',
+        steps: [
+          ['1', 'El cliente realiza un pedido en el sitio web.'],
+          ['2', 'El sistema registra la solicitud y consulta disponibilidad.'],
+          ['3', 'Se detecta falta de stock suficiente.'],
+          ['4', 'Se notifica la falta de stock.'],
+          ['5', 'Se inicia el proceso de reabastecimiento.'],
+          ['6', 'Se calcula un retraso estimado.'],
+          ['7', 'Se informa al cliente sobre el cambio de estado y la demora.']
+        ]
+      }
+    };
+
+    const timeline = document.getElementById('timeline');
+    const flowNote = document.getElementById('flowNote');
+    const tabs = document.querySelectorAll('.tab');
+
+    function renderFlow(name) {
+      const flow = flows[name];
+      timeline.innerHTML = flow.steps.map(([num, text]) => `
+        <article class="step">
+          <div class="num">${num}</div>
+          <div>
+            <h4>${text}</h4>
+            <p>${name === 'normal'
+              ? 'Parte del recorrido operativo que conecta cliente, servicios, facturacion y almacen.'
+              : 'Ruta alternativa para controlar excepciones, stock y experiencia del cliente.'}</p>
+          </div>
+        </article>
+      `).join('');
+      flowNote.textContent = flow.note;
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(btn => btn.classList.remove('active'));
+        tab.classList.add('active');
+        renderFlow(tab.dataset.flow);
+      });
+    });
+
+    renderFlow('normal');
+  </script>
+</body>
+</html>
