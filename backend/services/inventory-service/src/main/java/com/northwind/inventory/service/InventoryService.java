@@ -4,6 +4,7 @@ import com.northwind.inventory.dto.InventoryDtos.InventoryCheckRequest;
 import com.northwind.inventory.dto.InventoryDtos.InventoryItemRequest;
 import com.northwind.inventory.dto.InventoryDtos.InventoryResponse;
 import com.northwind.inventory.dto.InventoryDtos.RestockRequest;
+import com.northwind.inventory.entity.InventoryEntity;
 import com.northwind.inventory.repository.InventoryRepository;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +31,27 @@ public class InventoryService {
   }
 
   public Map<String, Object> restock(RestockRequest request) {
+    request.items().forEach(this::restockItem);
     Map<String, Object> response = new HashMap<>();
     response.put("restockRequested", true);
     response.put("items", request.items().size());
     return response;
+  }
+
+  private void restockItem(InventoryItemRequest request) {
+    InventoryEntity item = repository.findByProductId(request.productId())
+      .orElseGet(() -> {
+        InventoryEntity newItem = new InventoryEntity();
+        newItem.setProductId(request.productId());
+        newItem.setAvailableQuantity(0);
+        newItem.setReservedQuantity(0);
+        newItem.setReorderLevel(10);
+        newItem.setStatus("AVAILABLE");
+        return newItem;
+      });
+    item.setAvailableQuantity(item.getAvailableQuantity() + request.quantity());
+    item.setStatus(item.getAvailableQuantity() > 0 ? "AVAILABLE" : "OUT_OF_STOCK");
+    repository.save(item);
   }
 
   public InventoryResponse get(Long productId) {

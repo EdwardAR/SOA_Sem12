@@ -83,13 +83,28 @@ export async function reserveInventory(token: string, items: { productId: number
   return data
 }
 
+export async function restockInventory(token: string, items: { productId: number; quantity: number; unitPrice: number }[]): Promise<any> {
+  const { data } = await client(INVENTORY, token).post('/inventory/restock', { items })
+  return data
+}
+
 export async function listInvoices(token: string): Promise<InvoiceResponse[]> {
   const { data } = await client(BILLING, token).get('/invoices')
   return data
 }
 
+export async function createInvoice(token: string, payload: { orderId: number; amount: number }): Promise<InvoiceResponse> {
+  const { data } = await client(BILLING, token).post('/invoices', payload)
+  return data
+}
+
 export async function listShipments(token: string): Promise<ShipmentResponse[]> {
   const { data } = await client(WAREHOUSE, token).get('/shipments')
+  return data
+}
+
+export async function createShipment(token: string, payload: { orderId: number; orderNumber: string }): Promise<ShipmentResponse> {
+  const { data } = await client(WAREHOUSE, token).post('/shipments', payload)
   return data
 }
 
