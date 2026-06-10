@@ -24,7 +24,8 @@
     "8087": { "label": "Warehouse Service", "onAutoForward": "silent" },
     "3306": { "label": "MySQL", "onAutoForward": "silent" }
   },
-  "postCreateCommand": "docker compose up -d",
+  "postCreateCommand": "docker compose up -d && cd frontend && npm run dev &",
+  "postStartCommand": "docker compose start 2>/dev/null; cd frontend && npm run dev &",
   "customizations": {
     "vscode": {
       "extensions": [

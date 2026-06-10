@@ -144,11 +144,12 @@ El repositorio debe estar alojado en **GitHub**.
 
 1. Ir al repositorio en GitHub y hacer clic en **Code ▾ → Open with Codespaces → New codespace**.
 2. Esperar ~2-3 minutos mientras se configura el entorno (JDK 21, Node 20, Maven).
-3. Una vez iniciado el terminal, el proyecto ya se levantó automáticamente con:
+3. Una vez iniciado el terminal, los backends y MySQL se levantan automáticamente con Docker, y el frontend se ejecuta directamente en el host para mejor detección de puertos:
    ```bash
-   docker compose up -d
+   docker compose up -d        # Backends + MySQL
+   cd frontend && npm run dev  # Frontend (ya se inicia automáticamente)
    ```
-4. Cuando los contenedores estén listos, abrir la URL del frontend que aparece en la notificación (o ir a la pestaña **Ports** y abrir el puerto **5173**).
+4. Abrir la URL del frontend que aparece en la notificación (o ir a la pestaña **Ports** y abrir el puerto **5173**). Si no aparece, esperar unos segundos y recargar la pestaña.
 
 ### Acceso
 
