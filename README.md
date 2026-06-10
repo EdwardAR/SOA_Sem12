@@ -132,6 +132,55 @@ docker compose down -v
 docker compose up --build -d frontend
 ```
 
+## GitHub Codespaces
+
+Puedes ejecutar todo el proyecto directamente desde tu navegador con GitHub Codespaces.
+
+### Requisito
+
+El repositorio debe estar alojado en **GitHub**.
+
+### Pasos
+
+1. Ir al repositorio en GitHub y hacer clic en **Code ▾ → Open with Codespaces → New codespace**.
+2. Esperar ~2-3 minutos mientras se configura el entorno (JDK 21, Node 20, Maven).
+3. Una vez iniciado el terminal, el proyecto ya se levantó automáticamente con:
+   ```bash
+   docker compose up -d
+   ```
+4. Cuando los contenedores estén listos, abrir la URL del frontend que aparece en la notificación (o ir a la pestaña **Ports** y abrir el puerto **5173**).
+
+### Acceso
+
+| Componente | URL en Codespaces |
+|---|---|
+| Frontend (React) | `https://<hash>-5173.preview.app.github.dev` |
+| auth-service | `http://localhost:8081/api/auth` |
+| customer-service | `http://localhost:8082/api/customers` |
+| product-service | `http://localhost:8083/api/products` |
+| order-service | `http://localhost:8084/api/orders` |
+| inventory-service | `http://localhost:8085/api/inventory` |
+| billing-service | `http://localhost:8086/api/invoices` |
+| warehouse-service | `http://localhost:8087/api/shipments` |
+
+> **Credenciales**: `admin` / `admin`
+
+### Reconstruir después de cambios
+
+Si modificas código fuente y quieres actualizar los contenedores:
+
+```bash
+docker compose up --build -d
+```
+
+### Detener
+
+```bash
+docker compose down
+```
+
+Los archivos de configuración están en `.devcontainer/devcontainer.json`. Este directorio **no afecta la ejecución local**.
+
 ## Desarrollo local (sin Docker)
 
 Ejecutar cada componente desde la terminal para desarrollo y depuración.

@@ -1,0 +1,37 @@
+{
+  "name": "Northwind SOA",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "installMaven": "true"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "forwardPorts": [
+    5173, 8081, 8082, 8083, 8084, 8085, 8086, 8087, 3306
+  ],
+  "portsAttributes": {
+    "5173": { "label": "Frontend", "onAutoForward": "notify" },
+    "8081": { "label": "Auth Service", "onAutoForward": "silent" },
+    "8082": { "label": "Customer Service", "onAutoForward": "silent" },
+    "8083": { "label": "Product Service", "onAutoForward": "silent" },
+    "8084": { "label": "Order Service", "onAutoForward": "silent" },
+    "8085": { "label": "Inventory Service", "onAutoForward": "silent" },
+    "8086": { "label": "Billing Service", "onAutoForward": "silent" },
+    "8087": { "label": "Warehouse Service", "onAutoForward": "silent" },
+    "3306": { "label": "MySQL", "onAutoForward": "silent" }
+  },
+  "postCreateCommand": "docker compose up -d",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "dbaeumer.vscode-eslint",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
