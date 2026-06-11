@@ -119,6 +119,14 @@ services:
       context: ./frontend
     ports:
       - "5173:5173"
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8080
+      CUSTOMER_SERVICE_URL: http://customer-service:8080
+      PRODUCT_SERVICE_URL: http://product-service:8080
+      ORDER_SERVICE_URL: http://order-service:8080
+      INVENTORY_SERVICE_URL: http://inventory-service:8080
+      BILLING_SERVICE_URL: http://billing-service:8080
+      WAREHOUSE_SERVICE_URL: http://warehouse-service:8080
     depends_on:
       - order-service
 

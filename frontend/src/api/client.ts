@@ -1,13 +1,15 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 
-const AUTH = import.meta.env.VITE_AUTH_API_BASE_URL ?? 'http://localhost:8081/api'
-const CUSTOMER = import.meta.env.VITE_CUSTOMER_API_BASE_URL ?? 'http://localhost:8082/api'
-const PRODUCT = import.meta.env.VITE_PRODUCT_API_BASE_URL ?? 'http://localhost:8083/api'
-const ORDER = import.meta.env.VITE_ORDER_API_BASE_URL ?? 'http://localhost:8084/api'
-const INVENTORY = import.meta.env.VITE_INVENTORY_API_BASE_URL ?? 'http://localhost:8085/api'
-const BILLING = import.meta.env.VITE_BILLING_API_BASE_URL ?? 'http://localhost:8086/api'
-const WAREHOUSE = import.meta.env.VITE_WAREHOUSE_API_BASE_URL ?? 'http://localhost:8087/api'
+const isRemote = typeof window !== 'undefined' && !['localhost', '127.0.0.1', ''].includes(window.location.hostname)
+
+const AUTH = import.meta.env.VITE_AUTH_API_BASE_URL ?? (isRemote ? '/api' : 'http://localhost:8081/api')
+const CUSTOMER = import.meta.env.VITE_CUSTOMER_API_BASE_URL ?? (isRemote ? '/api' : 'http://localhost:8082/api')
+const PRODUCT = import.meta.env.VITE_PRODUCT_API_BASE_URL ?? (isRemote ? '/api' : 'http://localhost:8083/api')
+const ORDER = import.meta.env.VITE_ORDER_API_BASE_URL ?? (isRemote ? '/api' : 'http://localhost:8084/api')
+const INVENTORY = import.meta.env.VITE_INVENTORY_API_BASE_URL ?? (isRemote ? '/api' : 'http://localhost:8085/api')
+const BILLING = import.meta.env.VITE_BILLING_API_BASE_URL ?? (isRemote ? '/api' : 'http://localhost:8086/api')
+const WAREHOUSE = import.meta.env.VITE_WAREHOUSE_API_BASE_URL ?? (isRemote ? '/api' : 'http://localhost:8087/api')
 
 export function authClient(): AxiosInstance {
   return axios.create({ baseURL: AUTH })

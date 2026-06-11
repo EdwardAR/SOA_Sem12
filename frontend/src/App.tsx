@@ -13,6 +13,7 @@ import {
   Warehouse as InventoryIcon, LocalShipping as ShipmentIcon,
   Login as LoginIcon, Logout as LogoutIcon, Add as AddIcon,
   Menu as MenuIcon, CheckCircle, LocalShipping, Receipt, Storage,
+  Refresh as RefreshIcon,
 } from '@mui/icons-material'
 import {
   login, listCustomers, createCustomer,
@@ -188,6 +189,22 @@ export default function App() {
     } catch { setError('Error al crear despacho') }
   }
 
+  async function handleRefreshInvoices() {
+    try {
+      const data = await listInvoices(token)
+      setInvoices(data)
+      setSnack('Facturas actualizadas')
+    } catch { setError('Error al actualizar facturas') }
+  }
+
+  async function handleRefreshShipments() {
+    try {
+      const data = await listShipments(token)
+      setShipments(data)
+      setSnack('Despachos actualizados')
+    } catch { setError('Error al actualizar despachos') }
+  }
+
   const sidebar = (
     <Box sx={{ width: 240, bgcolor: '#0a1628', height: '100%', color: '#eaf1ff', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ p: 2.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -350,12 +367,14 @@ export default function App() {
               {page === 'invoices' && <DataTable title="Facturas" rows={invoices}
                 columns={['N° Factura', 'Pedido ID', 'Monto', 'Estado']}
                 renderRow={r => [r.invoiceNumber, r.orderId, `S/${r.amount.toFixed(2)}`, <StatusChip value={r.status} />]}
-                onRowClick={r => setDetailInvoice(r)} onAdd={() => setCreateDialog('invoice')} addLabel="Nueva factura" loading={loading} />}
+                onRowClick={r => setDetailInvoice(r)} onAdd={() => setCreateDialog('invoice')} addLabel="Nueva factura"
+                onRefresh={handleRefreshInvoices} loading={loading} />}
 
               {page === 'shipments' && <DataTable title="Despachos" rows={shipments}
                 columns={['N° Despacho', 'Pedido ID', 'Tracking', 'Estado']}
                 renderRow={r => [r.shipmentNumber, r.orderId, r.trackingCode || '—', <StatusChip value={r.status} />]}
-                onRowClick={r => setDetailShipment(r)} onAdd={() => setCreateDialog('shipment')} addLabel="Nuevo despacho" loading={loading} />}
+                onRowClick={r => setDetailShipment(r)} onAdd={() => setCreateDialog('shipment')} addLabel="Nuevo despacho"
+                onRefresh={handleRefreshShipments} loading={loading} />}
 
               {page === 'inventory' && (
                 <Box>
@@ -651,13 +670,20 @@ export default function App() {
   )
 }
 
-function DataTable({ title, rows, columns, renderRow, onAdd, onRowClick, addLabel, loading }: {
-  title: string; rows: any[]; columns: string[]; renderRow: (row: any) => any[]; onAdd?: () => void; onRowClick?: (row: any) => void; addLabel?: string; loading?: boolean
+function DataTable({ title, rows, columns, renderRow, onAdd, onRowClick, addLabel, loading, onRefresh }: {
+  title: string; rows: any[]; columns: string[]; renderRow: (row: any) => any[]; onAdd?: () => void; onRowClick?: (row: any) => void; addLabel?: string; loading?: boolean; onRefresh?: () => void
 }) {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1, flexWrap: 'wrap' }}>
-        <Typography variant="h5" fontWeight={800} sx={{ fontSize: { xs: '1.3rem', sm: '1.7rem' } }}>{title}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="h5" fontWeight={800} sx={{ fontSize: { xs: '1.3rem', sm: '1.7rem' } }}>{title}</Typography>
+          {onRefresh && (
+            <IconButton onClick={onRefresh} size="small" sx={{ color: '#9fb2d4', '&:hover': { color: '#7cf0c8' } }}>
+              <RefreshIcon />
+            </IconButton>
+          )}
+        </Box>
         {onAdd && <Button startIcon={<AddIcon />} variant="contained" onClick={onAdd}
           sx={{ bgcolor: '#7cf0c8', color: '#07111f', fontWeight: 700, whiteSpace: 'nowrap', fontSize: { xs: '0.8rem', sm: '0.9rem' }, py: { xs: 0.8, sm: 1 }, px: { xs: 1.5, sm: 2.5 }, '&:hover': { bgcolor: '#5dd4a8' } }}>{addLabel || 'Nuevo'}</Button>}
       </Box>
